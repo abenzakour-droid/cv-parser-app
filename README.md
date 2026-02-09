@@ -1,5 +1,7 @@
 # CV Parser App
 
-Application de traitement de CV - En cours de développement
+Application web de traitement de CV avec extraction automatique et export Excel.
 
-This repository will contain a complete CV parsing application with automatic data extraction and Excel export.
+## En cours de développement...
+
+L'application complète sera disponible sous peu.
