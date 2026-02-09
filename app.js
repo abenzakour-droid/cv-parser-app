@@ -40,18 +40,20 @@ const setTableRow = (values) => {
 };
 
 const resetTable = () => {
-  resultsBody.innerHTML = `
-    <tr class="empty-row">
-      <td colspan="5">Importez un CV pour afficher les résultats.</td>
-    </tr>
-  `;
+  setTableRow([
+    "Ex: Salma Ait Lahcen",
+    "exemple@mail.com",
+    "+212 6 12 34 56 78",
+    "Casablanca, Maroc",
+    "linkedin.com/in/salma",
+  ]);
   exportButton.disabled = true;
   copyButton.disabled = true;
   resetButton.disabled = true;
-  updateStatus("Aucun fichier importé.", {
+  updateStatus("Aucun fichier importé. Aperçu affiché.", {
     fileName: "—",
     fileType: "—",
-    scanScore: "Prêt",
+    scanScore: "Aperçu",
     progress: 0,
   });
 };
