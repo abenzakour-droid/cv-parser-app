@@ -22,6 +22,10 @@
             Importez un CV en PDF ou Word. L'application extrait automatiquement les coordonnées et
             les place dans un tableau élégant, exportable en Excel.
           </p>
+          <div class="hero-actions">
+            <button class="primary" id="choose-file-button">Choisir un CV</button>
+            <button class="ghost" id="reset-button" type="button" disabled>Réinitialiser</button>
+          </div>
         </div>
         <div class="hero-card">
           <h2>Formats supportés</h2>
@@ -50,6 +54,9 @@
             <span id="file-type" class="tag">—</span>
             <span id="scan-score" class="tag">Prêt</span>
           </div>
+          <div class="progress">
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
         </div>
       </section>
 
@@ -59,7 +66,10 @@
             <h2>Coordonnées détectées</h2>
             <p>Modifiez si nécessaire puis exportez vers Excel.</p>
           </div>
-          <button id="export-button" class="primary" disabled>Exporter Excel</button>
+          <div class="results-actions">
+            <button id="export-button" class="primary" disabled>Exporter Excel</button>
+            <button id="copy-button" class="ghost" disabled>Copier les données</button>
+          </div>
         </div>
         <div class="table-card">
           <table>

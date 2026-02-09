@@ -4,8 +4,12 @@ const statusText = document.getElementById("status-text");
 const fileNameTag = document.getElementById("file-name");
 const fileTypeTag = document.getElementById("file-type");
 const scanScoreTag = document.getElementById("scan-score");
+const progressBar = document.getElementById("progress-bar");
 const resultsBody = document.getElementById("results-body");
 const exportButton = document.getElementById("export-button");
+const copyButton = document.getElementById("copy-button");
+const chooseFileButton = document.getElementById("choose-file-button");
+const resetButton = document.getElementById("reset-button");
 
 const CONTACT_FIELDS = ["Nom complet", "Email", "Téléphone", "Ville / Pays", "LinkedIn"];
 
@@ -14,6 +18,9 @@ const updateStatus = (message, detail = {}) => {
   if (detail.fileName) fileNameTag.textContent = detail.fileName;
   if (detail.fileType) fileTypeTag.textContent = detail.fileType;
   if (detail.scanScore) scanScoreTag.textContent = detail.scanScore;
+  if (typeof detail.progress === "number") {
+    progressBar.style.width = `${detail.progress}%`;
+  }
 };
 
 const setTableRow = (values) => {
@@ -32,14 +39,39 @@ const setTableRow = (values) => {
   resultsBody.appendChild(row);
 };
 
+const resetTable = () => {
+  resultsBody.innerHTML = `
+    <tr class="empty-row">
+      <td colspan="5">Importez un CV pour afficher les résultats.</td>
+    </tr>
+  `;
+  exportButton.disabled = true;
+  copyButton.disabled = true;
+  resetButton.disabled = true;
+  updateStatus("Aucun fichier importé.", {
+    fileName: "—",
+    fileType: "—",
+    scanScore: "Prêt",
+    progress: 0,
+  });
+};
+
 const extractContact = (text) => {
   const normalized = text.replace(/\s+/g, " ").trim();
   const email = normalized.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0] || "";
-  const phone = normalized.match(/(\+\d{1,3}[\s-]?)?(\(?\d{2,4}\)?[\s-]?){2,4}\d{2,4}/)?.[0] || "";
+  const phone =
+    normalized.match(/(\+\d{1,3}[\s-]?)?(\(?\d{2,4}\)?[\s-]?){2,4}\d{2,4}/)?.[0] || "";
   const linkedin = normalized.match(/(https?:\/\/)?(www\.)?linkedin\.com\/[A-Za-z0-9_\-\/]+/i)?.[0] || "";
 
-  const firstLine = text.split(/\n/).find((line) => line.trim().length > 2) || "";
-  const locationMatch = normalized.match(/(Casablanca|Rabat|Marrakesh|Fes|Tanger|Agadir|Morocco|Maroc|France|Paris|Lyon|Marseille)/i);
+  const lines = text
+    .split(/\n/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 2);
+  const firstLine =
+    lines.find((line) => !line.toLowerCase().includes("curriculum") && !line.includes("@")) || "";
+  const locationMatch = normalized.match(
+    /(Casablanca|Rabat|Marrakesh|Fes|Tanger|Agadir|Morocco|Maroc|France|Paris|Lyon|Marseille)/i
+  );
 
   return {
     name: firstLine.trim().slice(0, 40),
@@ -76,30 +108,38 @@ const handleFile = async (file) => {
     fileName: file.name,
     fileType: extension === "pdf" ? "PDF" : "DOCX",
     scanScore: "Analyse",
+    progress: 20,
   });
 
   try {
     let text = "";
     if (extension === "pdf") {
+      updateStatus("Lecture du PDF...", { scanScore: "Analyse", progress: 40 });
       text = await readPdfText(file);
     } else if (extension === "docx") {
+      updateStatus("Lecture du document Word...", { scanScore: "Analyse", progress: 40 });
       text = await readDocxText(file);
     } else {
-      updateStatus("Format non supporté.", { scanScore: "Erreur" });
+      updateStatus("Format non supporté.", { scanScore: "Erreur", progress: 0 });
       return;
     }
 
+    updateStatus("Extraction des coordonnées...", { scanScore: "Analyse", progress: 70 });
     const contact = extractContact(text);
     const values = [contact.name, contact.email, contact.phone, contact.location, contact.linkedin];
     setTableRow(values);
     exportButton.disabled = false;
+    copyButton.disabled = false;
+    resetButton.disabled = false;
     updateStatus("Analyse terminée. Vérifiez les champs ci-dessous.", {
       scanScore: "OK",
+      progress: 100,
     });
   } catch (error) {
     console.error(error);
     updateStatus("Impossible d'analyser le fichier. Réessayez.", {
       scanScore: "Erreur",
+      progress: 0,
     });
   }
 };
@@ -115,8 +155,29 @@ const exportToExcel = () => {
   XLSX.writeFile(workbook, "cv-coordonnees.xlsx");
 };
 
+const copyToClipboard = async () => {
+  const row = resultsBody.querySelector("tr");
+  if (!row) return;
+  const values = Array.from(row.querySelectorAll("input")).map((input) => input.value);
+  const data = CONTACT_FIELDS.map((field, index) => `${field}: ${values[index] || "—"}`).join("\n");
+  try {
+    await navigator.clipboard.writeText(data);
+    updateStatus("Coordonnées copiées dans le presse-papiers.", {
+      scanScore: "OK",
+    });
+  } catch (error) {
+    console.error(error);
+    updateStatus("Impossible de copier. Essayez manuellement.", {
+      scanScore: "Erreur",
+    });
+  }
+};
+
 fileInput.addEventListener("change", (event) => handleFile(event.target.files[0]));
 exportButton.addEventListener("click", exportToExcel);
+copyButton.addEventListener("click", copyToClipboard);
+chooseFileButton.addEventListener("click", () => fileInput.click());
+resetButton.addEventListener("click", resetTable);
 
 ["dragenter", "dragover"].forEach((eventName) => {
   dropZone.addEventListener(eventName, (event) => {
@@ -136,3 +197,5 @@ dropZone.addEventListener("drop", (event) => {
   const [file] = event.dataTransfer.files;
   handleFile(file);
 });
+
+resetTable();

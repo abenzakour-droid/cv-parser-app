@@ -6,7 +6,7 @@ Application web de traitement de CV avec extraction automatique et export Excel.
 
 - Import PDF (.pdf) ou Word (.docx) via glisser-déposer.
 - Extraction des coordonnées (nom, email, téléphone, localisation, LinkedIn).
-- Tableau éditable avec export Excel.
+- Tableau éditable avec export Excel et copie rapide.
 
 ## Démarrage rapide
 
