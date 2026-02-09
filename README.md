@@ -2,6 +2,16 @@
 
 Application web de traitement de CV avec extraction automatique et export Excel.
 
-## En cours de développement...
+## Fonctionnalités
 
-L'application complète sera disponible sous peu.
+- Import PDF (.pdf) ou Word (.docx) via glisser-déposer.
+- Extraction des coordonnées (nom, email, téléphone, localisation, LinkedIn).
+- Tableau éditable avec export Excel.
+
+## Démarrage rapide
+
+```bash
+python -m http.server 8000
+```
+
+Ouvrez ensuite `http://localhost:8000` dans votre navigateur.
