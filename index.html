@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CV Parser App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <div>
+          <p class="badge">CV Parser App</p>
+          <h1>Analysez un CV et récupérez ses coordonnées en quelques secondes.</h1>
+          <p class="subtitle">
+            Importez un CV en PDF ou Word. L'application extrait automatiquement les coordonnées et
+            les place dans un tableau élégant, exportable en Excel.
+          </p>
+          <div class="hero-actions">
+            <button class="primary" id="choose-file-button">Choisir un CV</button>
+            <button class="ghost" id="reset-button" type="button" disabled>Réinitialiser</button>
+          </div>
+        </div>
+        <div class="hero-card">
+          <h2>Formats supportés</h2>
+          <ul>
+            <li>PDF (.pdf)</li>
+            <li>Word (.docx)</li>
+          </ul>
+          <p class="helper">Astuce : la détection est automatique, vérifiez les champs avant export.</p>
+        </div>
+      </header>
+
+      <section class="upload-section">
+        <div class="upload-panel" id="drop-zone">
+          <div class="upload-icon">⬆️</div>
+          <div>
+            <h3>Glissez votre CV ici</h3>
+            <p>ou cliquez pour sélectionner un fichier.</p>
+          </div>
+          <input id="file-input" type="file" accept=".pdf,.docx" />
+        </div>
+        <div class="status-panel">
+          <h3>État de l'analyse</h3>
+          <p id="status-text">Aucun fichier importé.</p>
+          <div class="status-tags">
+            <span id="file-name" class="tag">—</span>
+            <span id="file-type" class="tag">—</span>
+            <span id="scan-score" class="tag">Prêt</span>
+          </div>
+          <div class="progress">
+            <div class="progress-bar" id="progress-bar"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="results">
+        <div class="results-header">
+          <div>
+            <h2>Coordonnées détectées</h2>
+            <p>Modifiez si nécessaire puis exportez vers Excel.</p>
+          </div>
+          <div class="results-actions">
+            <button id="export-button" class="primary" disabled>Exporter Excel</button>
+            <button id="copy-button" class="ghost" disabled>Copier les données</button>
+          </div>
+        </div>
+        <div class="table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Nom complet</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Ville / Pays</th>
+                <th>LinkedIn</th>
+              </tr>
+            </thead>
+            <tbody id="results-body">
+              <tr class="empty-row">
+                <td colspan="5">Importez un CV pour afficher les résultats.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <p>Conçu pour une extraction rapide et fiable des coordonnées professionnelles.</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
